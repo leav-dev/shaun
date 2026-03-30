@@ -16,7 +16,7 @@ services:
       - DB_PATH=/app/data/orgnizador.db
     healthcheck:
       test:
-        ["CMD", "wget", "-q", "--spider", "http://localhost:8080/api/health"]
+        ["CMD", "node", "-q", "--spider", "http://localhost:8080/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
