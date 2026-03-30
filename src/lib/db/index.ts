@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Database file in persistent volume
-const DB_PATH = process.env.DB_PATH || join(__dirname, '../../data/orgnizador.db');
+const DB_PATH = process.env.DB_PATH || '/app/data/orgnizador.db';
 
 // Ensure data directory exists dynamically based on the target DB path
 const dbDir = dirname(DB_PATH);
