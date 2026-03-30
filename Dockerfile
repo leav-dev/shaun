@@ -31,7 +31,7 @@ COPY --from=builder /app/astro.config.mjs ./
 COPY --from=deps /app/node_modules ./node_modules
 
 # Create data directory for SQLite and set ownership
-RUN mkdir -p /app/data && chown -R appuser:appuser /app
+RUN mkdir -p /app/data && chown -R appuser:nodejs /app
 
 # Switch to non-root user
 USER appuser
