@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   orgnizador:
@@ -15,7 +15,7 @@ services:
       - NODE_ENV=production
       - DB_PATH=/app/data/orgnizador.db
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/users"]
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/"]
       interval: 30s
       timeout: 10s
       retries: 3

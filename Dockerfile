@@ -17,6 +17,7 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+ENV PORT=8080
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
@@ -36,5 +37,5 @@ RUN mkdir -p /app/data && chown -R appuser:nodejs /app/data
 # Switch to non-root user
 USER appuser
 
-EXPOSE 3000
+EXPOSE 8080
 CMD ["node", "dist/server/entry.mjs"]
