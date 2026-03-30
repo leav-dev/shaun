@@ -1,6 +1,6 @@
-# Shaun Orgnizador 🚀
+# Shaun Organizador 🚀
 
-**Orgnizador** es una plataforma de gestión de proyectos y tareas al estilo Kanban, diseñada bajo una arquitectura moderna, rápida y de cero-fricción. Desarrollada para equipos e individuos que buscan visualizar sus flujos de trabajo sin la pesadez de configuraciones complejas y sobrecargas de infraestructura.
+**Shaun Organizador** es una plataforma de gestión de proyectos y tareas al estilo Kanban, diseñada bajo una arquitectura moderna, rápida y de cero-fricción. Desarrollada para equipos e individuos que buscan visualizar sus flujos de trabajo sin la pesadez de configuraciones complejas y sobrecargas de infraestructura.
 
 ## ✨ Características Principales
 
@@ -30,8 +30,8 @@ Sigue estos sencillos pasos para tener tu entorno de desarrollo local configurad
 Clona el repositorio e instala las dependencias necesarias:
 
 ```bash
-git clone https://github.com/tu-usuario/orgnizador.git
-cd orgnizador
+git clone https://github.com/tu-usuario/shaun.git
+cd shaun
 npm install
 ```
 
