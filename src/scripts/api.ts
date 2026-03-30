@@ -52,6 +52,10 @@ export async function getProject(projectId: string) {
   return api.get(`/api/projects/${projectId}`);
 }
 
+export async function healthCheck() {
+  return { status: 200, data: 'OK' };
+}
+
 export async function createProject(data: any) {
   return api.post('/api/projects', data);
 }
