@@ -16,10 +16,10 @@ services:
       - DB_PATH=/app/data/orgnizador.db
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
-      interval: 30000000000s
-      timeout: 10000000000s
+      interval: 3000000s
+      timeout: 1000000s
       retries: 3
-      start_period: 30000000000s
+      start_period: 3000000s
 
 volumes:
   orgnizador_data:
