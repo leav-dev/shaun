@@ -37,5 +37,5 @@ RUN mkdir -p /app/data && chown -R appuser:nodejs /app/data
 # Switch to non-root user
 USER appuser
 
-EXPOSE 8080
+EXPOSE 3000
 CMD ["node", "dist/server/entry.mjs"]
