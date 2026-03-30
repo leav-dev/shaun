@@ -30,10 +30,11 @@ COPY --from=builder /app/astro.config.mjs ./
 # Use node package manager bin
 COPY --from=deps /app/node_modules ./node_modules
 
-USER appuser
-
-# Create data directory for SQLite
+# Create data directory for SQLite and set ownership
 RUN mkdir -p /app/data && chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
 
 EXPOSE 3000
 CMD ["node", "dist/server/entry.mjs"]
