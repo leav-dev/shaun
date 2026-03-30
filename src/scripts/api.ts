@@ -53,7 +53,8 @@ export async function getProject(projectId: string) {
 }
 
 export async function healthCheck() {
-  return { status: 200, data: 'OK' };
+  const res = await api.get('/api/health');
+  return res;
 }
 
 export async function createProject(data: any) {
