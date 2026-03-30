@@ -1,4 +1,4 @@
-# Orgnizador 🚀
+# Shaun Orgnizador 🚀
 
 **Orgnizador** es una plataforma de gestión de proyectos y tareas al estilo Kanban, diseñada bajo una arquitectura moderna, rápida y de cero-fricción. Desarrollada para equipos e individuos que buscan visualizar sus flujos de trabajo sin la pesadez de configuraciones complejas y sobrecargas de infraestructura.
 
