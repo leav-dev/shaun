@@ -73,8 +73,7 @@ export function renderTaskCard(task: any): string {
 // Render board HTML
 export function renderBoard() {
   const board = document.getElementById('board');
-  if (!board || !currentProject) return;
-  
+  if (board == null) return 
   let html = columns.map(col => {
     const filteredTasks = filterTasks(col.tasks || []);
     const taskCount = filters.search || filters.priority ? `${filteredTasks.length}/${col.tasks?.length || 0}` : (col.tasks?.length || 0);

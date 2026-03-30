@@ -214,7 +214,7 @@ export async function loadSprints() {
       <p class="text-sm text-slate-500 mb-2">${s.goal || 'Sin objetivo definido'}</p>
       <div class="flex items-center justify-between text-xs text-slate-400">
         <span>${s.start_date ? new Date(s.start_date).toLocaleDateString('es') : 'Sin fecha'} - ${s.end_date ? new Date(s.end_date).toLocaleDateString('es') : 'Sin fecha'}</span>
-        <span class="font-medium">${s.tasks?.length || 0} tareas</span>
+        <span class="font-medium">${sprints?.length || 0} tareas</span>
       </div>
     </div>
   `).join('');
@@ -262,6 +262,7 @@ export async function doCreateSprint(data: any) {
 export async function doUpdateSprintStatus(sprintId: string, status: string) {
   await api.updateSprint(sprintId, { status });
   await loadSprints();
+  renderBoard()
 }
 
 export async function removeTaskFromSprint(taskId: string) {
@@ -283,33 +284,55 @@ export async function openAddTaskToSprint() {
   if (!list) return;
 
   if (availableTasks.length === 0) {
-    list.innerHTML = '<p class="text-sm text-slate-400">No hay tareas disponibles.</p>';
-    return;
+    list.innerHTML = `
+      <div class="text-center py-6">
+        <div class="mb-4">
+          <svg class="w-16 h-16 text-slate-200 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+          </svg>
+        </div>
+        <h4 class="text-sm font-medium text-slate-600 mb-2">¡Todas las tareas están asignadas!</h4>
+        <p class="text-xs text-slate-400 mb-4">No hay tareas disponibles para agregar a este sprint.</p>
+        <div class="bg-slate-50 rounded-lg p-4 border border-slate-100">
+          <p class="text-xs text-slate-500">
+            💡 <strong>Tip:</strong> Usa el botón "Crear nueva tarea" arriba para definir nuevas tareas específicas para este sprint.
+          </p>
+        </div>
+      </div>
+    `;
+  } else {
+    list.innerHTML = availableTasks.map((t: any) => `
+      <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-primary-300 cursor-pointer" 
+           data-task-id="${t.id}">
+        <div class="flex items-center gap-3">
+          <span class="px-2 py-0.5 rounded-full text-xs font-medium ${priorityColors[t.priority]}">${priorityLabels[t.priority]}</span>
+          <span class="text-sm text-slate-700">${t.title}</span>
+        </div>
+        <span class="text-primary-600 text-sm font-medium">Agregar</span>
+      </div>
+    `).join('');
+
+    // Add click handlers only if there are tasks
+    list.querySelectorAll('[data-task-id]').forEach((el) => {
+      const htmlEl = el as HTMLElement;
+      htmlEl.addEventListener('click', async () => {
+        const taskId = htmlEl.dataset.taskId!;
+        console.log('Adding existing task to sprint:', { sprintId: currentSprint.id, taskId });
+        try {
+          await api.addTaskToSprintApi(currentSprint.id, taskId);
+          console.log('Task added to sprint successfully');
+          setCurrentSprint(await api.getSprint(currentSprint.id));
+          renderSprintTasks(currentSprint.tasks || []);
+          await loadSprints();
+          await openAddTaskToSprint();
+        } catch (error) {
+          console.error('Error adding task to sprint:', error);
+        }
+      });
+    });
   }
 
-  list.innerHTML = availableTasks.map((t: any) => `
-    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200 hover:border-primary-300 cursor-pointer" 
-         data-task-id="${t.id}" onclick="window.orgnizador.addTaskToSprint('${t.id}')">
-      <div class="flex items-center gap-3">
-        <span class="px-2 py-0.5 rounded-full text-xs font-medium ${priorityColors[t.priority]}">${priorityLabels[t.priority]}</span>
-        <span class="text-sm text-slate-700">${t.title}</span>
-      </div>
-      <span class="text-primary-600 text-sm font-medium">Agregar</span>
-    </div>
-  `).join('');
-
-  // Add click handlers
-  list.querySelectorAll('[data-task-id]').forEach((el) => {
-    const htmlEl = el as HTMLElement;
-    htmlEl.addEventListener('click', async () => {
-      await api.addTaskToSprintApi(currentSprint.id, htmlEl.dataset.taskId!);
-      setCurrentSprint(await api.getSprint(currentSprint.id));
-      renderSprintTasks(currentSprint.tasks || []);
-      await loadSprints();
-      await openAddTaskToSprint();
-    });
-  });
-
+  // Always show the modal, regardless of available tasks
   show('add-task-sprint-modal');
 }
 
@@ -320,6 +343,93 @@ export async function addTaskToSprint(taskId: string) {
   renderSprintTasks(currentSprint.tasks || []);
   await loadSprints();
   await openAddTaskToSprint();
+}
+
+async function openNewTaskFromSprint() {
+  if (!currentProject || !currentSprint) return;
+  
+  // Load project columns for the select
+  const project = await api.getProject(currentProject.id);
+  const columnSelect = document.getElementById('task-sprint-column') as HTMLSelectElement;
+  if (columnSelect && project.columns) {
+    columnSelect.innerHTML = project.columns.map((col: any) => 
+      `<option value="${col.id}">${col.name}</option>`
+    ).join('');
+  }
+  
+  // Set sprint ID
+  const sprintIdInput = document.getElementById('task-sprint-id') as HTMLInputElement;
+  if (sprintIdInput) {
+    sprintIdInput.value = currentSprint.id;
+  }
+  
+  show('new-task-sprint-modal');
+}
+
+async function doCreateTaskFromSprint() {
+  const form = document.getElementById('new-task-sprint-form') as HTMLFormElement;
+  if (!form || !currentProject || !currentSprint) {
+    console.error('Missing form, project, or sprint:', { form: !!form, currentProject: !!currentProject, currentSprint: !!currentSprint });
+    return;
+  }
+  
+  const title = (document.getElementById('task-sprint-title') as HTMLInputElement).value;
+  const description = (document.getElementById('task-sprint-desc') as HTMLTextAreaElement).value;
+  const priority = (document.getElementById('task-sprint-priority') as HTMLSelectElement).value;
+  const dueDate = (document.getElementById('task-sprint-due-date') as HTMLInputElement).value;
+  const columnId = (document.getElementById('task-sprint-column') as HTMLSelectElement).value;
+  
+  console.log('Form data:', { title, description, priority, dueDate, columnId });
+  
+  if (!title.trim() || !columnId) {
+    console.error('Missing required fields:', { title: title.trim(), columnId });
+    return;
+  }
+  
+  // Get current user ID for created_by field
+  const createdBy = currentUser?.id || 'system';
+  
+  const taskData = {
+    title: title.trim(),
+    description: description.trim(),
+    priority,
+    due_date: dueDate || null,
+    created_by: createdBy
+  };
+  
+  try {
+    console.log('Creating task with data:', taskData);
+    // Create the task first
+    const newTask = await api.createTask(columnId, taskData);
+    console.log('Task created response:', newTask);
+    
+    if (!newTask || !newTask.id) {
+      console.error('Task was not created properly, no ID returned');
+      alert('Error: No se pudo crear la tarea');
+      return;
+    }
+    
+    // Then add the task to the sprint
+    console.log('Adding task to sprint:', { sprintId: currentSprint.id, taskId: newTask.id });
+    const addResult = await api.addTaskToSprintApi(currentSprint.id, newTask.id);
+    console.log('Add to sprint result:', addResult);
+    
+    // Refresh data
+    const updatedSprint = await api.getSprint(currentSprint.id);
+    setCurrentSprint(updatedSprint);
+    renderSprintTasks(updatedSprint.tasks || []);
+    await loadSprints();
+    
+    // Reset form and close modal
+    form.reset();
+    hide('new-task-sprint-modal');
+    
+    console.log('Tarea creada y agregada al sprint exitosamente');
+    
+  } catch (error) {
+    console.error('Error creating task for sprint:', error);
+    alert('Error al crear la tarea. Revisa la consola para más detalles.');
+  }
 }
 
 // ==================== FILTERS ====================
@@ -471,7 +581,12 @@ export function initEventListeners() {
     show('sprint-modal');
   });
 
-  document.getElementById('close-sprint-modal')?.addEventListener('click', () => hide('sprint-modal'));
+  document.getElementById('close-sprint-modal')?.addEventListener('click', () => {
+    hide('sprint-modal');
+    if (currentSprint) {
+      renderSprintTasks(currentSprint.tasks || []);
+    }
+  });
   document.getElementById('new-sprint-btn')?.addEventListener('click', () => {
     hide('sprint-modal');
     show('new-sprint-modal');
@@ -502,6 +617,9 @@ export function initEventListeners() {
   document.getElementById('close-sprint-detail')?.addEventListener('click', () => {
     hide('sprint-detail-modal');
     show('sprint-modal');
+    if (currentSprint) {
+      renderSprintTasks(currentSprint.tasks || []);
+    }
   });
 
   document.getElementById('sprint-detail-status')?.addEventListener('change', async (e) => {
@@ -515,6 +633,20 @@ export function initEventListeners() {
 
   document.getElementById('close-add-task-sprint')?.addEventListener('click', () => {
     hide('add-task-sprint-modal');
+  });
+
+  document.getElementById('create-new-task-from-sprint')?.addEventListener('click', () => {
+    hide('add-task-sprint-modal');
+    openNewTaskFromSprint();
+  });
+
+  document.getElementById('cancel-task-sprint-btn')?.addEventListener('click', () => {
+    hide('new-task-sprint-modal');
+  });
+
+  document.getElementById('new-task-sprint-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await doCreateTaskFromSprint();
   });
 
   document.getElementById('add-column-btn-header')?.addEventListener('click', doAddColumn);

@@ -31,7 +31,8 @@ export function hideAllModals() {
     'sprint-modal',
     'new-sprint-modal',
     'sprint-detail-modal',
-    'add-task-sprint-modal'
+    'add-task-sprint-modal',
+    'new-task-sprint-modal'
   ];
   modals.forEach(m => hide(m));
 }

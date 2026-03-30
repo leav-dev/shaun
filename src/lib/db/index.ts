@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
 import { mkdirSync, existsSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -147,6 +147,14 @@ export function initializeDatabase() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
+    -- Sessions for authentication
+    CREATE TABLE IF NOT EXISTS sessions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      expires_at DATETIME NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
     -- Indexes
     CREATE INDEX IF NOT EXISTS idx_columns_project ON columns(project_id);
     CREATE INDEX IF NOT EXISTS idx_tasks_column ON tasks(column_id);
@@ -155,10 +163,17 @@ export function initializeDatabase() {
     CREATE INDEX IF NOT EXISTS idx_comments_task ON comments(task_id);
     CREATE INDEX IF NOT EXISTS idx_sprints_project ON sprints(project_id);
     CREATE INDEX IF NOT EXISTS idx_activity_project ON activity_log(project_id);
+    CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+    CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at);
   `);
 }
 
 // Initialize on import
 initializeDatabase();
+
+// Force reinitialize function for development
+export function reinitializeDatabase() {
+  initializeDatabase();
+}
 
 export default db;

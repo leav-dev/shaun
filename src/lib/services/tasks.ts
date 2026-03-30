@@ -10,7 +10,7 @@ export const TaskSchema = z.object({
   priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
   due_date: z.string().optional(),
   start_date: z.string().optional(),
-  created_by: z.string(),
+  created_by: z.string().optional(),
 });
 
 export type Task = {
@@ -38,6 +38,9 @@ export function createTask(data: z.infer<typeof TaskSchema>): Task {
     position = (maxPos.max ?? -1) + 1;
   }
   
+  // Default created_by to 'system' if not provided
+  const createdBy = data.created_by || 'system';
+  
   const stmt = db.prepare(`
     INSERT INTO tasks (id, column_id, title, description, position, priority, due_date, start_date, created_by)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -52,7 +55,7 @@ export function createTask(data: z.infer<typeof TaskSchema>): Task {
     data.priority || 'medium',
     data.due_date || null,
     data.start_date || null,
-    data.created_by
+    createdBy
   );
   
   return getTaskById(id)!;

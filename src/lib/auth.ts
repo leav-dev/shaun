@@ -7,16 +7,6 @@ import { nanoid } from 'nanoid';
 export function createSession(userId: string): string {
   const sessionId = nanoid(32);
   
-  // Create sessions table if not exists
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS sessions (
-      id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL REFERENCES users(id),
-      expires_at DATETIME NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-  
   // Session expires in 7 days
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 7);
