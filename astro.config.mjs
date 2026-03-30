@@ -8,7 +8,7 @@ export default defineConfig({
     mode: 'standalone'
   }),
   server: {
-    port: 3000,
+    port: 8080,
     host: true
   },
   integrations: [tailwind()]
