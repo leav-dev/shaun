@@ -1,0 +1,39 @@
+FROM node:22-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+WORKDIR /app
+COPY package.json ./
+RUN npm install
+
+# Build the application
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN npm run dev
+
+# Production image
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 appuser
+
+# Copy built assets
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/astro.config.mjs ./
+
+# Use node package manager bin
+COPY --from=deps /app/node_modules ./node_modules
+
+USER appuser
+
+# Create data directory for SQLite
+RUN mkdir -p /app/data && chown -R appuser:appuser /app
+
+EXPOSE 3000
+CMD ["node", "dist/server/entry.mjs"]

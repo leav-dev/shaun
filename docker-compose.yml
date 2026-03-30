@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  orgnizador:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: orgnizador
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - orgnizador_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - DB_PATH=/app/data/orgnizador.db
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/users"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  orgnizador_data:
+    driver: local

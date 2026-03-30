@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AuthScreen from '../components/AuthScreen.astro';
+import ProjectsList from '../components/ProjectsList.astro';
+import KanbanBoard from '../components/KanbanBoard.astro';
+import NewProjectModal from '../components/NewProjectModal.astro';
+import NewTaskModal from '../components/NewTaskModal.astro';
+import TaskDetailModal from '../components/TaskDetailModal.astro';
+import SprintModal from '../components/SprintModal.astro';
+---
+
+<BaseLayout title="Orgnizador - Tus Proyectos">
+  <div id="app">
+    <!-- Screens -->
+    <AuthScreen isVisible={false} />
+    <ProjectsList isVisible={false} />
+    <KanbanBoard isVisible={false} />
+    
+    <!-- Modals -->
+    <NewProjectModal />
+    <NewTaskModal />
+    <TaskDetailModal />
+    <SprintModal />
+  </div>
+
+  <script>
+    import { init } from '../scripts/app';
+    
+    // Initialize app
+    init();
+  </script>
+</BaseLayout>

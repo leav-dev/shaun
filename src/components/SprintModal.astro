@@ -1,0 +1,121 @@
+---
+---
+
+<!-- Sprint List Modal -->
+<div id="sprint-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl animate-scale-in max-h-[90vh] flex flex-col">
+    <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between shrink-0">
+      <h3 class="text-lg font-semibold text-slate-900">Sprints</h3>
+      <button class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors" id="close-sprint-modal">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="p-6 overflow-y-auto flex-1">
+      <div class="mb-4 flex gap-2">
+        <button id="new-sprint-btn" class="inline-flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+          </svg>
+          Nuevo Sprint
+        </button>
+      </div>
+      <div id="sprints-list" class="space-y-3">
+        <!-- Sprints will be loaded here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Sprint Modal -->
+<div id="new-sprint-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md animate-scale-in">
+    <div class="px-6 py-4 border-b border-slate-200">
+      <h3 class="text-lg font-semibold text-slate-900">Nuevo Sprint</h3>
+    </div>
+    <form id="new-sprint-form" class="p-6 space-y-4">
+      <div>
+        <label for="sprint-name" class="block text-sm font-medium text-slate-700 mb-1">Nombre del Sprint</label>
+        <input type="text" id="sprint-name" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Sprint 1" required>
+      </div>
+      <div>
+        <label for="sprint-goal" class="block text-sm font-medium text-slate-700 mb-1">Objetivo</label>
+        <textarea id="sprint-goal" rows="2" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none" placeholder="¿Qué queremos lograr?"></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="sprint-start" class="block text-sm font-medium text-slate-700 mb-1">Fecha inicio</label>
+          <input type="date" id="sprint-start" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+        </div>
+        <div>
+          <label for="sprint-end" class="block text-sm font-medium text-slate-700 mb-1">Fecha fin</label>
+          <input type="date" id="sprint-end" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+        </div>
+      </div>
+    </form>
+    <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+      <button type="button" id="cancel-sprint-btn" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">Cancelar</button>
+      <button type="submit" form="new-sprint-form" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">Crear Sprint</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sprint Detail Modal -->
+<div id="sprint-detail-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl animate-scale-in max-h-[90vh] flex flex-col">
+    <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between shrink-0">
+      <div>
+        <h3 id="sprint-detail-name" class="text-lg font-semibold text-slate-900">Sprint</h3>
+        <p id="sprint-detail-dates" class="text-sm text-slate-500"></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <select id="sprint-detail-status" class="px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+          <option value="planning">Planificación</option>
+          <option value="active">Activo</option>
+          <option value="completed">Completado</option>
+        </select>
+        <button class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors" id="close-sprint-detail">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="p-6 overflow-y-auto flex-1">
+      <div class="mb-6">
+        <h4 class="text-sm font-medium text-slate-500 mb-2">Objetivo</h4>
+        <p id="sprint-detail-goal" class="text-slate-700"></p>
+      </div>
+      
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-3">
+          <h4 class="text-sm font-medium text-slate-500">Tareas del Sprint</h4>
+          <button id="add-task-to-sprint-btn" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
+            + Agregar tarea
+          </button>
+        </div>
+        <div id="sprint-tasks-list" class="space-y-2">
+          <!-- Tasks will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Task to Sprint Modal -->
+<div id="add-task-sprint-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md animate-scale-in">
+    <div class="px-6 py-4 border-b border-slate-200">
+      <h3 class="text-lg font-semibold text-slate-900">Agregar Tarea al Sprint</h3>
+    </div>
+    <div class="p-6 max-h-96 overflow-y-auto">
+      <div id="available-tasks-list" class="space-y-2">
+        <!-- Available tasks will be loaded here -->
+      </div>
+    </div>
+    <div class="px-6 py-4 border-t border-slate-200 flex justify-end">
+      <button type="button" id="close-add-task-sprint" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">Cerrar</button>
+    </div>
+  </div>
+</div>

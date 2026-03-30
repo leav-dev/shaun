@@ -1,0 +1,27 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Development
+.astro
+*.log
+npm-debug.log*
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Data (should be in volume)
+data
+*.db
+*.db-journal

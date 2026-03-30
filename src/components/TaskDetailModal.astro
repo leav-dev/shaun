@@ -1,0 +1,71 @@
+---
+---
+
+<div id="task-detail-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl animate-scale-in max-h-[90vh] overflow-hidden flex flex-col">
+    <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between shrink-0">
+      <h3 id="task-detail-title" class="text-lg font-semibold text-slate-900">Detalle de Tarea</h3>
+      <button class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors" id="close-task-detail">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="p-6 overflow-y-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-slate-500 mb-2">Descripción</label>
+            <p id="task-detail-desc" class="text-slate-700 whitespace-pre-wrap"></p>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-slate-500 mb-3">Comentarios</label>
+            <div id="task-comments" class="space-y-4 mb-4">
+              <!-- Comments will be loaded here -->
+            </div>
+            <form id="add-comment-form" class="flex gap-2">
+              <input type="text" id="comment-content" class="flex-1 px-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Escribir un comentario...">
+              <button type="submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors">Enviar</button>
+            </form>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1">Estado</label>
+            <select id="task-detail-status" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white text-sm">
+              <!-- Columns will be loaded here -->
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1">Prioridad</label>
+            <select id="task-detail-priority" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white text-sm">
+              <option value="low">Baja</option>
+              <option value="medium">Media</option>
+              <option value="high">Alta</option>
+              <option value="urgent">Urgente</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-slate-500 mb-1">Fecha límite</label>
+            <input type="date" id="task-detail-due" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-slate-500 mb-2">Asignados</label>
+            <div id="task-assignees" class="flex flex-wrap gap-2">
+              <!-- Assignees will be loaded here -->
+            </div>
+          </div>
+          
+          <div class="pt-4 border-t border-slate-200">
+            <button id="delete-task-btn" class="w-full px-4 py-2 text-red-600 hover:bg-red-50 text-sm font-medium rounded-lg transition-colors">Eliminar Tarea</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
