@@ -2,17 +2,18 @@
 
 import { priorityColors, priorityLabels, statusColors, statusLabels } from './constants';
 import { currentProject, filters, columns, draggedTaskId, projects, currentUser } from './state';
+import * as state from './state';
 import { api } from './api';
 import { show, hide, showScreen } from './ui';
 import { openProject, loadProjects, openAddTaskToSprint } from './app';
 
 // Filter tasks based on current filters
-function filterTasks(tasks: any[]): any[] {
+function filterTasks(tasks: any[], currentFilters = filters): any[] {
   return tasks.filter(task => {
-    if (filters.search && !task.title.toLowerCase().includes(filters.search.toLowerCase())) {
+    if (currentFilters.search && !task.title.toLowerCase().includes(currentFilters.search.toLowerCase())) {
       return false;
     }
-    if (filters.priority && task.priority !== filters.priority) {
+    if (currentFilters.priority && task.priority !== currentFilters.priority) {
       return false;
     }
     return true;
@@ -73,10 +74,13 @@ export function renderTaskCard(task: any): string {
 // Render board HTML
 export function renderBoard() {
   const board = document.getElementById('board');
-  if (board == null) return 
-  let html = columns.map(col => {
-    const filteredTasks = filterTasks(col.tasks || []);
-    const taskCount = filters.search || filters.priority ? `${filteredTasks.length}/${col.tasks?.length || 0}` : (col.tasks?.length || 0);
+  if (board == null) return;
+  // Leer siempre el estado más reciente en el momento de la llamada
+  const currentColumns = state.columns;
+  const currentFilters = state.filters;
+  let html = currentColumns.map(col => {
+    const filteredTasks = filterTasks(col.tasks || [], currentFilters);
+    const taskCount = currentFilters.search || currentFilters.priority ? `${filteredTasks.length}/${col.tasks?.length || 0}` : (col.tasks?.length || 0);
     
     return `
     <div class="flex-shrink-0 w-80 flex flex-col bg-slate-100 rounded-2xl max-h-full" data-id="${col.id}">

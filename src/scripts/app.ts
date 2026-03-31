@@ -214,7 +214,6 @@ export async function loadSprints() {
       <p class="text-sm text-slate-500 mb-2">${s.goal || 'Sin objetivo definido'}</p>
       <div class="flex items-center justify-between text-xs text-slate-400">
         <span>${s.start_date ? new Date(s.start_date).toLocaleDateString('es') : 'Sin fecha'} - ${s.end_date ? new Date(s.end_date).toLocaleDateString('es') : 'Sin fecha'}</span>
-        <span class="font-medium">${sprints?.length || 0} tareas</span>
       </div>
     </div>
   `).join('');
@@ -359,9 +358,8 @@ async function openNewTaskFromSprint() {
   
   // Set sprint ID
   const sprintIdInput = document.getElementById('task-sprint-id') as HTMLInputElement;
-  if (sprintIdInput) {
-    sprintIdInput.value = currentSprint.id;
-  }
+  sprintIdInput.value = currentSprint.id;
+  
   
   show('new-task-sprint-modal');
 }
@@ -583,9 +581,9 @@ export function initEventListeners() {
 
   document.getElementById('close-sprint-modal')?.addEventListener('click', () => {
     hide('sprint-modal');
-    if (currentSprint) {
-      renderSprintTasks(currentSprint.tasks || []);
-    }
+    renderSprintTasks(currentSprint.tasks || []);
+    
+    renderBoard()
   });
   document.getElementById('new-sprint-btn')?.addEventListener('click', () => {
     hide('sprint-modal');
@@ -617,9 +615,9 @@ export function initEventListeners() {
   document.getElementById('close-sprint-detail')?.addEventListener('click', () => {
     hide('sprint-detail-modal');
     show('sprint-modal');
-    if (currentSprint) {
-      renderSprintTasks(currentSprint.tasks || []);
-    }
+    
+    renderSprintTasks(currentSprint.tasks || []);
+    
   });
 
   document.getElementById('sprint-detail-status')?.addEventListener('change', async (e) => {

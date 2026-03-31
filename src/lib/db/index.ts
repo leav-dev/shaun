@@ -1,18 +1,28 @@
 import Database from 'better-sqlite3';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
 import { mkdirSync, existsSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Database file in persistent volume
-const DB_PATH = process.env.DB_PATH || '/app/data/orgnizador.db';
+// Database file: prefer explicit env var (used in Docker), fall back to a
+// writable project-local path for development.
+const DB_PATH = process.env.DB_PATH || join(process.cwd(), 'data', 'orgnizador.db');
 
-// Ensure data directory exists dynamically based on the target DB path
+// Ensure data directory exists with proper permissions
 const dbDir = dirname(DB_PATH);
 if (!existsSync(dbDir)) {
-  mkdirSync(dbDir, { recursive: true });
+  try {
+    mkdirSync(dbDir, { recursive: true, mode: 0o755 });
+  } catch (err: any) {
+    if (err.code === 'EACCES') {
+      console.error(`[DB] Permission denied creating directory: ${dbDir}`);
+      console.error(`[DB] Fix: run "mkdir -p ${dbDir} && chmod 755 ${dbDir}" as root, or set DB_PATH to a writable location.`);
+      process.exit(1);
+    }
+    throw err;
+  }
 }
 
 export const db = new Database(DB_PATH);
